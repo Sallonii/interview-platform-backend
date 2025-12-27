@@ -1,0 +1,4 @@
+GET http://localhost:3000/question-bank
+
+###
+PUT http://localhost:3000/questions/1/bookmark
