@@ -1,16 +1,15 @@
 const express = require("express");
 const path = require("path");
-const cors = require("cors")
+const cors = require("cors");
 
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
+
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 const dbPath = path.join(__dirname, "tech.db");
-
 let db = null;
 
 const initializeDBAndServer = async () => {
@@ -19,8 +18,10 @@ const initializeDBAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     });
-    app.listen(3000, () => {
-      console.log("Server Running at http://localhost:3000/");
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (e) {
     console.log(`DB Error: ${e.message}`);
@@ -28,44 +29,37 @@ const initializeDBAndServer = async () => {
   }
 };
 
-
-app.get('/question-bank', async (request, response) => {
-  const getQuestionBankQuery = `
-  SELECT * FROM
-  question_bank;
-  `
-  const questionBankArray = await db.all(getQuestionBankQuery);
-  response.json(questionBankArray);
-})
+app.get("/question-bank", async (request, response) => {
+  const query = `SELECT * FROM question_bank;`;
+  const data = await db.all(query);
+  response.json(data);
+});
 
 app.put("/questions/:id/bookmark", async (request, response) => {
   try {
     const { id } = request.params;
 
-    const getQuery = `
-      SELECT isBookmarked
-      FROM question_bank
-      WHERE id = ?
-    `;
-    const question = await db.get(getQuery, [id]);
+    const question = await db.get(
+      `SELECT isBookmarked FROM question_bank WHERE id = ?`,
+      [id]
+    );
 
     if (!question) {
-      response.status(404).send({ error: "Question not found" });
+      response.status(404).json({ error: "Question not found" });
       return;
     }
+
     const updatedValue = question.isBookmarked === 1 ? 0 : 1;
 
+    await db.run(
+      `UPDATE question_bank SET isBookmarked = ? WHERE id = ?`,
+      [updatedValue, id]
+    );
 
-    const updateQuery = `
-      UPDATE question_bank
-      SET isBookmarked = ?
-      WHERE id = ?
-    `;
-    await db.run(updateQuery, [updatedValue, id]);
-
-    response.send({ isBookmarked: updatedValue });
+    response.json({ isBookmarked: updatedValue });
   } catch (error) {
-    response.status(500).send({ error: "Server error" });
+    response.status(500).json({ error: "Server error" });
   }
 });
+
 initializeDBAndServer();
