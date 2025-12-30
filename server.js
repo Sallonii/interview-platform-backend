@@ -74,15 +74,15 @@ app.post("/register", async (request, response) => {
         VALUES (?, ?);`;
       if(validatePassword(password)){
         await db.run(createUserQuery, [username, hashedPassword]);
-        response.status(200).send("User created successfully");
+        response.status(200).json({error_msg: "User created successfully"});
       }else{
-        response.status(400).send("Password is too short");
+        response.status(400).json({error_msg: "Password is too short" });
       }
     } else {
-      response.status(400).send("User already exists");
+      response.status(400).json({error_msg: "User already exists"});
     }
   }catch (error) {
-    response.status(500).send("Server error");
+    response.status(500).json({error_msg:"Server error"});
   }
 });
 
