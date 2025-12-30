@@ -1,4 +1,24 @@
 GET http://localhost:3000/question-bank
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbG9uaSIsImlhdCI6MTc2NzA5MDE1MSwiZXhwIjoxNzY3MDkzNzUxfQ.o6cdC9WqdQsgnqfLiLmrrR7jwJl0zI2GVQ12JMOTaKU
 
 ###
 PUT http://localhost:3000/questions/1/bookmark
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNhbG9uaSIsImlhdCI6MTc2NzA5MDE1MSwiZXhwIjoxNzY3MDkzNzUxfQ.o6cdC9WqdQsgnqfLiLmrrR7jwJl0zI2GVQ12JMOTaKU
+
+###
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "username": "saloni",
+  "password": "saloni999"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "saloni",
+  "password": "saloni999"
+}
